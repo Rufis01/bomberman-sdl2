@@ -1,7 +1,7 @@
 #ifndef _BOMBERMAN_GAME_H_
 #define _BOMBERMAN_GAME_H_
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <memory>
 
 #include "Managers/AssetManager.h"
@@ -19,7 +19,7 @@ namespace bomberman
          * @param windowWidth - width of window
          * @param windowHeight - height of window
          */
-        Game(const std::string& windowName, const int windowWidth, const int windowHeight);
+        Game(const int windowWidth, const int windowHeight);
         /**
          * @brief Destroy Game
          *
@@ -70,6 +70,7 @@ namespace bomberman
         // SDL2 C pointers
         SDL_Window* window = nullptr;
         SDL_Renderer* renderer = nullptr;
+        SDL_Joystick *joy = nullptr;
 
         SceneManager* sceneManager = nullptr; // scene manager
         AssetManager* assetManager = nullptr; // asset manager

@@ -1,12 +1,12 @@
 #ifndef _BOMBERMAN_SCENES_MENU_SCENE_H_
 #define _BOMBERMAN_SCENES_MENU_SCENE_H_
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <memory>
 
-#include "Entities/Music.h"
-#include "Entities/Text.h"
-#include "Scenes/Scene.h"
+#include "../Entities/Music.h"
+#include "../Entities/Text.h"
+#include "./Scene.h"
 
 namespace bomberman
 {

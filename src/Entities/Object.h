@@ -1,7 +1,7 @@
 #ifndef _BOMBERMAN_ENTITIES_OBJECT_H_
 #define _BOMBERMAN_ENTITIES_OBJECT_H_
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <memory>
 
 namespace bomberman
@@ -38,6 +38,8 @@ namespace bomberman
          * @param y - position y
          */
         void setPosition(const int x, const int y);
+        void setPositionX(const int x);
+        void setPositionY(const int y);
         /**
          * @brief Set the Clip of source texture
          *

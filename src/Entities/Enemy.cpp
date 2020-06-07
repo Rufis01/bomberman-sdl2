@@ -2,8 +2,8 @@
 #include <functional>
 #include <random>
 
-#include "Const.h"
-#include "Entities/Enemy.h"
+#include "../Const.h"
+#include "./Enemy.h"
 
 namespace bomberman
 {
@@ -11,23 +11,35 @@ namespace bomberman
         : Creature(_texture, _renderer)
     {
         // movement animation
-        movement = std::make_shared<Animation>();
-        movement->addAnimationEntity(AnimationEntity(0, 0, tileSize, tileSize));
-        movement->addAnimationEntity(AnimationEntity(tileSize * 1, 0, tileSize, tileSize));
-        movement->addAnimationEntity(AnimationEntity(tileSize * 2, 0, tileSize, tileSize));
-        movement->addAnimationEntity(AnimationEntity(tileSize * 3, 0, tileSize, tileSize));
-        movement->addAnimationEntity(AnimationEntity(tileSize * 4, 0, tileSize, tileSize));
-        movement->addAnimationEntity(AnimationEntity(tileSize * 5, 0, tileSize, tileSize));
-        movement->addAnimationEntity(AnimationEntity(tileSize * 6, 0, tileSize, tileSize));
-        movement->addAnimationEntity(AnimationEntity(tileSize * 7, 0, tileSize, tileSize));
-        movement->setSprite(this);
-        addAnimation(movement);
+        movementRight = std::make_shared<Animation>();
+        movementLeft = std::make_shared<Animation>();
+        movementUp = std::make_shared<Animation>();
+        movementDown = std::make_shared<Animation>();
+
+        for(int i = 0; i < 8; i++)
+        {
+            movementRight->addAnimationEntity(AnimationEntity(tileSize * i, 0, tileSize, tileSize));
+            movementDown->addAnimationEntity(AnimationEntity(tileSize * (16 + i), 0, tileSize, tileSize));  //I totally didn't mess the order up when editing the sprites
+        }
+        for(int i = 15; i > 7; i--) //This one are reversed because I just mirrored the whole image and copypasted it
+        {
+            movementLeft->addAnimationEntity(AnimationEntity(tileSize * i, 0, tileSize, tileSize));
+            movementUp->addAnimationEntity(AnimationEntity(tileSize * (16 + i), 0, tileSize, tileSize));    //I totally didn't mess the order up when editing the sprites
+        }
+
+        movementRight->setSprite(this);
+        movementLeft->setSprite(this);
+        movementUp->setSprite(this);
+        movementDown->setSprite(this);
+        addAnimation(movementRight);
+        addAnimation(movementLeft);
+        addAnimation(movementUp);
+        addAnimation(movementDown);
     }
 
     void Enemy::moveTo(const int x, const int y)
     {
         // start a moving, see update func
-        movement->play();
         setMoving(true);
         // save new position
         newPositionX = getPositionX() + x;
@@ -35,11 +47,31 @@ namespace bomberman
         // flip
         if(x < 0)
         {
-            setFlip(SDL_FLIP_HORIZONTAL);
+            movementLeft->play();
+            movementRight->pause();
+            movementUp->pause();
+            movementDown->pause();
         }
         else if(x > 0)
         {
-            setFlip(SDL_FLIP_NONE);
+            movementLeft->pause();
+            movementRight->play();
+            movementUp->pause();
+            movementDown->pause();
+        }
+        else if(y < 0)
+        {
+            movementLeft->pause();
+            movementRight->pause();
+            movementUp->play();
+            movementDown->pause();
+        }
+        else if(y > 0)
+        {
+            movementLeft->pause();
+            movementRight->pause();
+            movementUp->pause();
+            movementDown->play();
         }
     }
 
@@ -98,8 +130,8 @@ namespace bomberman
         // calculate consts for movement
         const int newPositionDiffX = getPositionX() - newPositionX;
         const int newPositionDiffY = getPositionY() - newPositionY;
-        const char signOfX = (newPositionDiffX > 0) ? 1 : ((newPositionDiffX < 0) ? -1 : 0);
-        const char signOfY = (newPositionDiffY > 0) ? 1 : ((newPositionDiffY < 0) ? -1 : 0);
+        const signed char signOfX = (newPositionDiffX > 0) ? 1 : ((newPositionDiffX < 0) ? -1 : 0);
+        const signed char signOfY = (newPositionDiffY > 0) ? 1 : ((newPositionDiffY < 0) ? -1 : 0);
         const int posDiff = static_cast<int>(floor((canAttack() ? attackSpeed : baseSpeed) * delta * getWidth()));
 
         prevPosDeltaX = posDiff * -signOfX;
@@ -108,15 +140,33 @@ namespace bomberman
         // finish movement
         if(newPositionDiffX * signOfX <= posDiff && newPositionDiffY * signOfY <= posDiff)
         {
-            movement->pause();
+            movementLeft->pause();
+            movementRight->pause();
             setMoving(false);
             movingToCell = false;
+            /*std::cout << "MOVEMENT ENDED ("<<newPositionDiffX * signOfX<<", "<<newPositionDiffY * signOfY<<") --> Moving enemy to (" << newPositionX << ", " << newPositionY << ")\n";
+            if(newPositionDiffX * signOfX < 0 )
+            {
+                std::cout << "PosX: " << getPositionX() << std::endl
+                          << "newPositionX: " << newPositionX << std::endl 
+                          << "newPositionDiffX: " << newPositionDiffX << std::endl 
+                          << "signOfX: " << (int)signOfX << std::endl;
+            }
+            if(newPositionDiffY * signOfY < 0 )
+            {
+                std::cout << "PosY: " << getPositionY() << std::endl
+                          << "newPositionY: " << newPositionY << std::endl 
+                          << "newPositionDiffY: " << newPositionDiffY << std::endl 
+                          << "signOfY: " << (int)signOfY << std::endl;
+            }*/
             setPosition(newPositionX, newPositionY);
             return;
         }
         // move sprite to next tick pos
         setPosition(getPositionX() - static_cast<int>(floor(posDiff)) * signOfX,
                     getPositionY() - static_cast<int>(floor(posDiff)) * signOfY);
+            /*std::cout << "Moving enemy to (" << getPositionX() - static_cast<int>(floor(posDiff)) * signOfX << ", "
+            << getPositionY() - static_cast<int>(floor(posDiff)) * signOfY << ")\n";*/
     }
 
     void Enemy::generateNewPath()

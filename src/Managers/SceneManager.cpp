@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "Managers/SceneManager.h"
+#include "./SceneManager.h"
 
 namespace bomberman
 {

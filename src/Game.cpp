@@ -1,6 +1,7 @@
-#include <SDL_image.h>
-#include <SDL_mixer.h>
-#include <SDL_ttf.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_ttf.h>
+#include <psp2/ctrl.h>
 
 #include <iostream>
 
@@ -10,11 +11,11 @@
 
 namespace bomberman
 {
-    Game::Game(const std::string& windowName, const int width, const int height)
+    Game::Game(const int width, const int height)
         : windowWidth(width), windowHeight(height)
     {
         // let's init SDL2
-        if(SDL_Init(SDL_INIT_VIDEO) != 0)
+        if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) != 0)
         {
             std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
             return;
@@ -42,8 +43,8 @@ namespace bomberman
         }
 
         // create a window
-        window = SDL_CreateWindow(windowName.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                  windowWidth, windowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI);
+        window = SDL_CreateWindow("https://www.youtube.com/watch?v=dQw4w9WgXcQ", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                                  windowWidth, windowHeight, 0);
         if(!window)
         {
             std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
@@ -56,6 +57,22 @@ namespace bomberman
         {
             std::cout << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
             return;
+        }
+
+        // Open joystick
+        joy = SDL_JoystickOpen(0);
+        
+        if(joy)
+        {
+            printf("Opened Joystick 0\n");
+            printf("Name: %s\n", SDL_JoystickName(0));
+            printf("Number of Axes: %d\n", SDL_JoystickNumAxes(joy));
+            printf("Number of Buttons: %d\n", SDL_JoystickNumButtons(joy));
+            printf("Number of Balls: %d\n", SDL_JoystickNumBalls(joy));
+        }
+        else
+        {
+            printf("Couldn't open Joystick 0\n");
         }
 
         // we need new size due to possible high resolution on mac and ios
@@ -75,6 +92,7 @@ namespace bomberman
         // delete SDL2 C pointers
         SDL_DestroyWindow(window);
         SDL_DestroyRenderer(renderer);
+        SDL_JoystickClose(joy);
 
         // SDL2 finish
         Mix_CloseAudio();
@@ -98,12 +116,11 @@ namespace bomberman
         sceneManager->addScene("menu", std::make_shared<MenuScene>(this));
         sceneManager->activateScene("menu");
 
-        SDL_Event event;
+	    SDL_Event event;
 
         while(isRunning)
         {
-            // check SDL2 events
-            while(SDL_PollEvent(&event))
+		    while(SDL_PollEvent(&event))
             {
                 // send event to current scene
                 sceneManager->onEvent(event);

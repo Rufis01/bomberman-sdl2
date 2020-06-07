@@ -1,13 +1,13 @@
 #ifndef _BOMBERMAN_ENTITIES_SPRITE_H_
 #define _BOMBERMAN_ENTITIES_SPRITE_H_
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <memory>
 #include <vector>
 
-#include "Entities/Object.h"
+#include "./Object.h"
 
-#include "Core/Animation.h"
+#include "../Core/Animation.h"
 
 namespace bomberman
 {

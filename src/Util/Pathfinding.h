@@ -3,7 +3,7 @@
 
 #include <stack>
 
-#include "Const.h"
+#include "../Const.h"
 
 namespace bomberman
 {

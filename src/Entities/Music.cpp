@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "Entities/Music.h"
+#include "./Music.h"
 
 namespace bomberman
 {

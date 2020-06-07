@@ -1,11 +1,11 @@
 #ifndef _BOMBERMAN_SCENES_GAME_OVER_SCENE_H_
 #define _BOMBERMAN_SCENES_GAME_OVER_SCENE_H_
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <memory>
 
-#include "Entities/Text.h"
-#include "Scenes/Scene.h"
+#include "../Entities/Text.h"
+#include "./Scene.h"
 
 namespace bomberman
 {

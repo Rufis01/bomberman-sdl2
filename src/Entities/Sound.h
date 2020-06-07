@@ -1,7 +1,7 @@
 #ifndef _BOMBERMAN_ENTITIES_SOUND_H_
 #define _BOMBERMAN_ENTITIES_SOUND_H_
 
-#include <SDL_mixer.h>
+#include <SDL2/SDL_mixer.h>
 #include <memory>
 
 namespace bomberman

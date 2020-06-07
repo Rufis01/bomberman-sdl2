@@ -1,10 +1,10 @@
 #ifndef _BOMBERMAN_SCENES_SCENE_H_
 #define _BOMBERMAN_SCENES_SCENE_H_
 
-#include <SDL.h>
+#include <psp2/ctrl.h>
 #include <vector>
 
-#include "Entities/Object.h"
+#include "../Entities/Object.h"
 
 namespace bomberman
 {

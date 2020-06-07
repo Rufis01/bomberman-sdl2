@@ -1,7 +1,7 @@
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 #include <iostream>
 
-#include "Managers/AssetManager.h"
+#include "./AssetManager.h"
 
 namespace bomberman
 {
@@ -10,24 +10,24 @@ namespace bomberman
         // load font
         loadFont();
         // load textures
-        loadTexture(renderer, Texture::MenuBack, "assets/menu_title.png");
-        loadTexture(renderer, Texture::Stone, "assets/stone.png");
-        loadTexture(renderer, Texture::Grass, "assets/grass.png");
-        loadTexture(renderer, Texture::Brick, "assets/brick.png");
-        loadTexture(renderer, Texture::Player, "assets/player.png");
-        loadTexture(renderer, Texture::Enemy1, "assets/enemy_1.png");
-        loadTexture(renderer, Texture::Enemy2, "assets/enemy_2.png");
-        loadTexture(renderer, Texture::Enemy3, "assets/enemy_3.png");
-        loadTexture(renderer, Texture::Bomb, "assets/bomb.png");
-        loadTexture(renderer, Texture::Explosion, "assets/explosion.png");
-        loadTexture(renderer, Texture::Door, "assets/door.png");
+        loadTexture(renderer, Texture::MenuBack, "app0:assets/menu_title.png");
+        loadTexture(renderer, Texture::Stone, "app0:assets/stone.png");
+        loadTexture(renderer, Texture::Grass, "app0:assets/grass.png");
+        loadTexture(renderer, Texture::Brick, "app0:assets/brick.png");
+        loadTexture(renderer, Texture::Player, "app0:assets/player.png");
+        loadTexture(renderer, Texture::Enemy1, "app0:assets/enemy_1.png");
+        loadTexture(renderer, Texture::Enemy2, "app0:assets/enemy_2.png");
+        loadTexture(renderer, Texture::Enemy3, "app0:assets/enemy_3.png");
+        loadTexture(renderer, Texture::Bomb, "app0:assets/bomb.png");
+        loadTexture(renderer, Texture::Explosion, "app0:assets/explosion.png");
+        loadTexture(renderer, Texture::Door, "app0:assets/door.png");
         // load music
-        loadMusic(MusicEnum::MainMenu, "assets/main_theme.ogg");
-        loadMusic(MusicEnum::Level, "assets/level.ogg");
+        loadMusic(MusicEnum::MainMenu, "app0:assets/main_theme.ogg");
+        loadMusic(MusicEnum::Level, "app0:assets/level.ogg");
         // load sounds
-        loadSound(SoundEnum::Win, "assets/win.wav");
-        loadSound(SoundEnum::Lose, "assets/lose.wav");
-        loadSound(SoundEnum::Explosion, "assets/explosion.wav");
+        loadSound(SoundEnum::Win, "app0:assets/win.wav");
+        loadSound(SoundEnum::Lose, "app0:assets/lose.wav");
+        loadSound(SoundEnum::Explosion, "app0:assets/explosion.wav");
         if (auto explosionSound = getSound(SoundEnum::Explosion))
         {
             Mix_VolumeChunk(explosionSound.get(), 35);
@@ -57,7 +57,7 @@ namespace bomberman
     void AssetManager::loadFont()
     {
         // load font
-        font = std::shared_ptr<TTF_Font>(TTF_OpenFont("assets/font.ttf", 32), TTF_CloseFont);
+        font = std::shared_ptr<TTF_Font>(TTF_OpenFont("app0:assets/font.ttf", 32), TTF_CloseFont);
         if(!font)
         {
             std::cout << "TTF_OpenFont Error: " << TTF_GetError() << std::endl;

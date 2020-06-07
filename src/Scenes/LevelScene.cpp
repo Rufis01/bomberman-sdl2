@@ -3,13 +3,15 @@
 #include <functional>
 #include <random>
 #include <string>
+#include <iostream>
 
-#include "Entities/Sprite.h"
-#include "Game.h"
-#include "Scenes/GameOverScene.h"
-#include "Scenes/LevelScene.h"
-#include "Scenes/StageScene.h"
-#include "Util/Pathfinding.h"
+#include "../Entities/Sprite.h"
+#include "../Game.h"
+#include "./GameOverScene.h"
+#include "./LevelScene.h"
+#include "./StageScene.h"
+#include "../Util/Pathfinding.h"
+
 
 namespace bomberman
 {
@@ -346,30 +348,30 @@ namespace bomberman
     {
         Scene::onEvent(event);
         // we need to update movement if movement keys pressed or released
-        if((event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) && event.key.repeat == 0)
+        if((event.jbutton.type == SDL_JOYBUTTONDOWN || event.jbutton.type == SDL_JOYBUTTONUP))
         {
-            updateMovement(event.type == SDL_KEYDOWN ? true : false, event.key.keysym.scancode);
+            updateMovement(event.jbutton.type == SDL_JOYBUTTONDOWN ? true : false, event.jbutton.button);
         }
 
-        if(event.type == SDL_KEYDOWN)
+        if(event.jbutton.type == SDL_JOYBUTTONDOWN)
         {
-            // we should go to main menu by Escape key
-            if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+            // we should go to main menu by TRIANGLE key
+            if(event.jbutton.button == 0)   //SCE_CTRL_TRIANGLE
             {
                 gameOver();
                 isWin = false;
                 gameOverTimer = winTimerStart;
             }
-            // we can spawn a bomb by space press
-            else if(event.key.keysym.scancode == SDL_SCANCODE_SPACE)
+            // we can spawn a bomb by X/O press
+            else if(event.jbutton.button == 2 /*SCE_CTRL_CROSS*/ || event.jbutton.button == 1 /*SCE_CTRL_CIRCLE*/)
             {
                 if(!isGameOver)
                 {
                     spawnBomb(player.get());
                 }
             }
-            // we can pause a game by pressing enter key
-            else if(event.key.keysym.scancode == SDL_SCANCODE_RETURN)
+            // we can pause a game by pressing START key
+            else if(event.jbutton.button == 11) //SCE_CTRL_START
             {
                 isPaused = !isPaused;
                 if(isPaused)
@@ -382,7 +384,7 @@ namespace bomberman
                 }
             }
             // stage complete cheat
-            else if(event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE)
+            else if(event.jbutton.button == 10) //SCE_CTRL_SELECT
             {
                 gameOver();
                 isWin = true;
@@ -521,20 +523,16 @@ namespace bomberman
         {
             switch(keycode)
             {
-                case SDL_SCANCODE_W:
-                case SDL_SCANCODE_UP:
+                case 8: //SCE_CTRL_UP
                     playerDirectionY -= 1;
                     break;
-                case SDL_SCANCODE_S:
-                case SDL_SCANCODE_DOWN:
+                case 6: //SCE_CTRL_DOWN
                     playerDirectionY += 1;
                     break;
-                case SDL_SCANCODE_A:
-                case SDL_SCANCODE_LEFT:
+                case 7: //SCE_CTRL_LEFT
                     playerDirectionX -= 1;
                     break;
-                case SDL_SCANCODE_D:
-                case SDL_SCANCODE_RIGHT:
+                case 9: //SCE_CTRL_RIGHT
                     playerDirectionX += 1;
                     break;
                 default:
@@ -546,20 +544,16 @@ namespace bomberman
         {
             switch(keycode)
             {
-                case SDL_SCANCODE_W:
-                case SDL_SCANCODE_UP:
+                case 8: //SCE_CTRL_UP
                     playerDirectionY += 1;
                     break;
-                case SDL_SCANCODE_S:
-                case SDL_SCANCODE_DOWN:
+                case 6: //SCE_CTRL_DOWN
                     playerDirectionY -= 1;
                     break;
-                case SDL_SCANCODE_A:
-                case SDL_SCANCODE_LEFT:
+                case 7: //SCE_CTRL_LEFT
                     playerDirectionX += 1;
                     break;
-                case SDL_SCANCODE_D:
-                case SDL_SCANCODE_RIGHT:
+                case 9: //SCE_CTRL_RIGHT
                     playerDirectionX -= 1;
                     break;
                 default:
@@ -567,27 +561,29 @@ namespace bomberman
             }
         }
         // depend on pressed key choose player's direction
-        MovementDirection direction = MovementDirection::None;
+        //BAD! The player can't move diagonally AND the direction might not change on new keypress
+        //TODO: Fix this ^^^
+        unsigned char direction = (unsigned char) MovementDirection::None;
         if(playerDirectionX != 0)
         {
             if(playerDirectionX > 0)
             {
-                direction = MovementDirection::Right;
+                direction |= (unsigned char) MovementDirection::Right;
             }
             else
             {
-                direction = MovementDirection::Left;
+                direction |= (unsigned char) MovementDirection::Left;
             }
         }
-        else if(playerDirectionY != 0)
+        if(playerDirectionY != 0)
         {
             if(playerDirectionY > 0)
             {
-                direction = MovementDirection::Down;
+                direction |= (unsigned char) MovementDirection::Down;
             }
             else
             {
-                direction = MovementDirection::Up;
+                direction |= (unsigned char) MovementDirection::Up;
             }
         }
         // apply direction
@@ -653,7 +649,7 @@ namespace bomberman
         {
             if(isCollisionDetected(playerRect, collisionObject.second->getRect()))
             {
-                player->revertLastMove();
+                player->revertLastMove();   //NOTE: Walls are sticky
             }
         }
         // door collision
@@ -790,13 +786,13 @@ namespace bomberman
     bool LevelScene::isCollisionDetected(const SDL_Rect& rect1, const SDL_Rect& rect2) const
     {
         // check for collision
-        if(rect1.x + rect1.w / 2 <= rect2.x - rect2.w / 2)
+        if(rect1.x + (rect1.w / 2) <= rect2.x - (rect2.w / 2))
             return false;
-        if(rect1.x - rect1.w / 2 >= rect2.x + rect2.w / 2)
+        if(rect1.x - (rect1.w / 2) >= rect2.x + (rect2.w / 2))
             return false;
-        if(rect1.y + rect1.h / 2 <= rect2.y - rect2.h / 2)
+        if(rect1.y + (rect1.h / 2) <= rect2.y - (rect2.h / 2))
             return false;
-        if(rect1.y - rect1.h / 2 >= rect2.y + rect2.h / 2)
+        if(rect1.y - (rect1.h / 2) >= rect2.y + (rect2.h / 2))
             return false;
 
         return true;

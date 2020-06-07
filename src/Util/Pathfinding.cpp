@@ -4,7 +4,7 @@
 #include <set>
 #include <utility>
 
-#include "Util/Pathfinding.h"
+#include "./Pathfinding.h"
 
 namespace bomberman
 {

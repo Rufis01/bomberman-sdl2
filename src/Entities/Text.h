@@ -1,9 +1,9 @@
 #ifndef _BOMBERMAN_ENTITIES_TEXT_H_
 #define _BOMBERMAN_ENTITIES_TEXT_H_
 
-#include <SDL_ttf.h>
+#include <SDL2/SDL_ttf.h>
 
-#include "Entities/Object.h"
+#include "./Object.h"
 
 namespace bomberman
 {

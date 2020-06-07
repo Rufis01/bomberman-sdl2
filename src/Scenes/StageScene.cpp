@@ -1,9 +1,9 @@
 #include <string>
 
-#include "Game.h"
-#include "Scenes/LevelScene.h"
-#include "Scenes/MenuScene.h"
-#include "Scenes/StageScene.h"
+#include "../Game.h"
+#include "./LevelScene.h"
+#include "./MenuScene.h"
+#include "./StageScene.h"
 
 namespace bomberman
 {

@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "Entities/Sound.h"
+#include "./Sound.h"
 
 namespace bomberman
 {

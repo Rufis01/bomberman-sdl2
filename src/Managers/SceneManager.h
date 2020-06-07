@@ -6,7 +6,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "Scenes/Scene.h"
+#include "../Scenes/Scene.h"
 
 namespace bomberman
 {

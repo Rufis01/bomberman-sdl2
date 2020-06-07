@@ -3,7 +3,7 @@
 
 #include <utility>
 
-#include "Entities/Creature.h"
+#include "./Creature.h"
 
 namespace bomberman
 {
@@ -99,7 +99,10 @@ namespace bomberman
         const float attackSpeed = 0.0025f;   // speed of attack enemy
         const int attackRadius = 4;         // attack radius (in cells)
         // animations
-        std::shared_ptr<Animation> movement; // movement animation
+        std::shared_ptr<Animation> movementRight; // movement animation
+        std::shared_ptr<Animation> movementLeft;
+        std::shared_ptr<Animation> movementDown;
+        std::shared_ptr<Animation> movementUp;
     };
 } // namespace bomberman
 

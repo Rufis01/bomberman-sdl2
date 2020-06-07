@@ -1,6 +1,6 @@
-#include "Core/Animation.h"
+#include "./Animation.h"
 
-#include "Entities/Sprite.h"
+#include "../Entities/Sprite.h"
 
 namespace bomberman
 {

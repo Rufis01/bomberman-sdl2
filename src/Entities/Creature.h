@@ -1,7 +1,7 @@
 #ifndef _BOMBERMAN_ENTITIES_CREATURE_H_
 #define _BOMBERMAN_ENTITIES_CREATURE_H_
 
-#include "Entities/Sprite.h"
+#include "./Sprite.h"
 
 namespace bomberman
 {
@@ -21,6 +21,8 @@ namespace bomberman
          *
          */
         void revertLastMove();
+        void revertLastMoveX();
+        void revertLastMoveY();
         /**
          * @brief Set creature to move
          *
@@ -34,8 +36,7 @@ namespace bomberman
          * @return false - if idle
          */
         bool isMoving() const;
-
-      protected:
+        
         // for movement revert
         int prevPosDeltaX = 0;
         int prevPosDeltaY = 0;

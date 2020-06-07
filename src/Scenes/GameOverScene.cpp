@@ -1,8 +1,8 @@
 #include <string>
 
-#include "Game.h"
-#include "Scenes/GameOverScene.h"
-#include "Scenes/MenuScene.h"
+#include "../Game.h"
+#include "./GameOverScene.h"
+#include "./MenuScene.h"
 
 namespace bomberman
 {

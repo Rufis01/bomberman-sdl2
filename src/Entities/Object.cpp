@@ -1,4 +1,4 @@
-#include "Entities/Object.h"
+#include "./Object.h"
 
 namespace bomberman
 {
@@ -18,6 +18,16 @@ namespace bomberman
     void Object::setPosition(const int x, const int y)
     {
         rect.x = x; // controls the rect's x coordinate
+        rect.y = y; // controls the rect's y coordinate
+    }
+
+    void Object::setPositionX(const int x)
+    {
+        rect.x = x; // controls the rect's x coordinate
+    }
+
+    void Object::setPositionY(const int y)
+    {
         rect.y = y; // controls the rect's y coordinate
     }
 

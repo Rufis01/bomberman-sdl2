@@ -1,18 +1,18 @@
 #ifndef _BOMBERMAN_LEVEL_SCENE_H_
 #define _BOMBERMAN_LEVEL_SCENE_H_
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <memory>
 #include <utility>
 #include <vector>
 
-#include "Const.h"
-#include "Entities/Enemy.h"
-#include "Entities/Music.h"
-#include "Entities/Player.h"
-#include "Entities/Sound.h"
-#include "Entities/Text.h"
-#include "Scenes/Scene.h"
+#include "../Const.h"
+#include "../Entities/Enemy.h"
+#include "../Entities/Music.h"
+#include "../Entities/Player.h"
+#include "../Entities/Sound.h"
+#include "../Entities/Text.h"
+#include "./Scene.h"
 
 namespace bomberman
 {

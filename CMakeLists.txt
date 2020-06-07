@@ -1,45 +1,67 @@
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required(VERSION 2.8)
 
-project (bomberman VERSION 1.0.1)
-
-message(STATUS "")
-message(STATUS "    == ${PROJECT_NAME} Project configuration ==")
-message(STATUS "")
-
-#------------------------------------------------------------------------------
-# General settings
-
-# Be nice to visual studio
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-# Be nice and export compile commands by default, this is handy for clang-tidy
-# and for other tools.
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-# We can use include() and find_package() for our scripts in there
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
-include(ConfigSafeGuards)
-
-# Set C++17
-set(CMAKE_CXX_STANDARD 17)
-
-# Enable helpfull warnings and c++17 for all files
-if(MSVC)
-    add_compile_options(/std:c++17 /W4 /MT )
-else()
-    add_compile_options(-std=c++17 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wunused -Wpedantic -pedantic-errors -Wconversion)
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+  if(DEFINED ENV{DOLCESDK})
+    set(CMAKE_TOOLCHAIN_FILE "$ENV{DOLCESDK}/share/dolce.toolchain.cmake" CACHE PATH "toolchain file")
+  else()
+    message(FATAL_ERROR "Please define DOLCESDK to point to your SDK path!")
+  endif()
 endif()
 
-#------------------------------------------------------------------------------
-# Project settings
+project(bomberman)
+include("${DOLCESDK}/share/dolce.cmake" REQUIRED)
 
-# Source code
-add_subdirectory(src)
+set(VITA_APP_NAME "Bomberman")
+set(VITA_TITLEID  "BOMB00001")
+set(VITA_VERSION  "01.01")
 
-# Wrap up of settings printed on build
-message(STATUS "")
-message(STATUS "    == Final overview for ${PROJECT_NAME} ==")
-message(STATUS "Version:              ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
-message(STATUS "Install prefix:       ${CMAKE_INSTALL_PREFIX}")
-message(STATUS "Compiler:             ${CMAKE_CXX_COMPILER}")
-message(STATUS "Build Type:           ${CMAKE_BUILD_TYPE}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+
+include_directories(
+)
+file(GLOB cpp_files
+    "src/*.cpp"
+    "src/Core/*.cpp"
+    "src/Entities/*.cpp"
+    "src/Managers/*.cpp"
+    "src/Scenes/*.cpp"
+    "src/Util/*.cpp"
+)
+add_executable(${PROJECT_NAME}
+  ${cpp_files}
+)
+
+target_link_libraries(${PROJECT_NAME}
+  SDL2_ttf
+  SDL2_mixer
+  SDL2_image
+  SDL2
+  FLAC
+  mikmod
+  mpg123
+  jpeg
+  png
+  vorbisfile
+  vorbis
+  ogg
+  z
+  freetype
+  vita2d
+  SceDisplay_stub
+  SceCtrl_stub
+  SceAudio_stub
+  SceSysmodule_stub
+  SceGxm_stub
+  SceCommonDialog_stub
+  SceTouch_stub
+  SceHid_stub
+  m
+)
+dolce_create_self(${PROJECT_NAME}.self ${PROJECT_NAME})
+dolce_create_vpk(${PROJECT_NAME}.vpk ${VITA_TITLEID} ${PROJECT_NAME}.self
+  VERSION ${VITA_VERSION}
+  NAME ${VITA_APP_NAME}
+  FILE sce_sys sce_sys
+  FILE assets assets
+  )

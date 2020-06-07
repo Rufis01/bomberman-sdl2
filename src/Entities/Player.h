@@ -1,9 +1,9 @@
 #ifndef _BOMBERMAN_ENTITIES_PLAYER_H_
 #define _BOMBERMAN_ENTITIES_PLAYER_H_
 
-#include "Entities/Creature.h"
+#include "./Creature.h"
 
-#include "Core/Animation.h"
+#include "../Core/Animation.h"
 
 namespace bomberman
 {
@@ -13,11 +13,11 @@ namespace bomberman
      */
     enum class MovementDirection
     {
-        None,
-        Up,
-        Down,
-        Left,
-        Right
+        None = 0,
+        Up = 1,
+        Down = 2,
+        Left = 4,
+        Right = 8
     };
     /**
      * @brief Player class
@@ -36,13 +36,14 @@ namespace bomberman
          *
          * @param direction - movement direction
          */
-        void setMovementDirection(MovementDirection direction);
+        void setMovementDirection(unsigned char direction);
         /**
          * @brief Update movement and animation of player
          *
          * @param delta - time in milliseconds
          */
         virtual void update(const unsigned int delta) override;
+        unsigned char movementDirection = (unsigned char) MovementDirection::None; // movement direction
 
       private:
         /**
@@ -56,9 +57,11 @@ namespace bomberman
          */
         bool isMovingHorizontally() const;
 
-        MovementDirection movementDirection = MovementDirection::None; // movement direction
         const float speed = 0.004f;                                   // speed
-        std::shared_ptr<Animation> movement;                           // movement animation
+        std::shared_ptr<Animation> movementRight;                     // movement animation
+        std::shared_ptr<Animation> movementLeft;
+        std::shared_ptr<Animation> movementDown;
+        std::shared_ptr<Animation> movementUp;
     };
 } // namespace bomberman
 

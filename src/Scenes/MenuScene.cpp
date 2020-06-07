@@ -1,11 +1,11 @@
 #include <string>
 
-#include "Entities/Sprite.h"
-#include "Game.h"
-#include "Scenes/GameOverScene.h"
-#include "Scenes/LevelScene.h"
-#include "Scenes/MenuScene.h"
-#include "Scenes/StageScene.h"
+#include "../Entities/Sprite.h"
+#include "../Game.h"
+#include "./GameOverScene.h"
+#include "./LevelScene.h"
+#include "./MenuScene.h"
+#include "./StageScene.h"
 
 namespace bomberman
 {
@@ -90,25 +90,23 @@ namespace bomberman
     void MenuScene::onEvent(const SDL_Event& event)
     {
         Scene::onEvent(event);
-        if(event.type == SDL_KEYDOWN)
+        if(event.jbutton.type == SDL_JOYBUTTONDOWN)
         {
-            switch(event.key.keysym.scancode)
+            switch(event.jbutton.button)
             {
                 // we should select next menu item
-                case SDL_SCANCODE_S:
-                case SDL_SCANCODE_DOWN:
+                case 6: //SCE_CTRL_DOWN
                     currentSelectedMenu++;
                     onMenuItemSelect();
                     break;
                 // we should select prev menu item
-                case SDL_SCANCODE_W:
-                case SDL_SCANCODE_UP:
+                case 8: //SCE_CTRL_UP
                     currentSelectedMenu--;
                     onMenuItemSelect();
                     break;
                 // enter in menu item
-                case SDL_SCANCODE_SPACE:
-                case SDL_SCANCODE_RETURN:
+                case 2: //SCE_CTRL_CROSS:
+                case 1: //SCE_CTRL_CIRCLE:
                     onMenuItemPress();
                     break;
                 default:

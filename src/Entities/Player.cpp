@@ -1,5 +1,5 @@
-#include "Player.h"
-#include "Const.h"
+#include "./Player.h"
+#include "../Const.h"
 
 namespace bomberman
 {
@@ -7,37 +7,71 @@ namespace bomberman
         : Creature(_texture, _renderer)
     {
         // movement animation
-        movement = std::make_shared<Animation>();
-        movement->addAnimationEntity(AnimationEntity(0, 0, tileSize, tileSize));
-        movement->addAnimationEntity(AnimationEntity(tileSize * 1, 0, tileSize, tileSize));
-        movement->addAnimationEntity(AnimationEntity(tileSize * 2, 0, tileSize, tileSize));
-        movement->addAnimationEntity(AnimationEntity(tileSize * 3, 0, tileSize, tileSize));
-        movement->addAnimationEntity(AnimationEntity(tileSize * 4, 0, tileSize, tileSize));
-        movement->addAnimationEntity(AnimationEntity(tileSize * 5, 0, tileSize, tileSize));
-        movement->addAnimationEntity(AnimationEntity(tileSize * 6, 0, tileSize, tileSize));
-        movement->addAnimationEntity(AnimationEntity(tileSize * 7, 0, tileSize, tileSize));
-        movement->setSprite(this);
-        addAnimation(movement);
+        movementRight = std::make_shared<Animation>();
+        movementLeft = std::make_shared<Animation>();
+        movementUp = std::make_shared<Animation>();
+        movementDown = std::make_shared<Animation>();
+
+        for(int i = 0; i < 8; i++)
+        {
+            movementRight->addAnimationEntity(AnimationEntity(tileSize * i, 0, tileSize, tileSize));
+            movementUp->addAnimationEntity(AnimationEntity(tileSize * (16 + i), 0, tileSize, tileSize));
+        }
+        for(int i = 15; i > 7; i--) //This one are reversed because I just mirrored the whole image and copypasted it
+        {
+            movementLeft->addAnimationEntity(AnimationEntity(tileSize * i, 0, tileSize, tileSize));
+            movementDown->addAnimationEntity(AnimationEntity(tileSize * (16 + i), 0, tileSize, tileSize));
+        }
+
+        movementRight->setSprite(this);
+        movementLeft->setSprite(this);
+        movementUp->setSprite(this);
+        movementDown->setSprite(this);
+        addAnimation(movementRight);
+        addAnimation(movementLeft);
+        addAnimation(movementUp);
+        addAnimation(movementDown);
     }
 
-    void Player::setMovementDirection(MovementDirection direction)
+    void Player::setMovementDirection(unsigned char direction)  //SDL_Flip doesn't work on vita
     {
         movementDirection = direction;
-        setMoving(movementDirection != MovementDirection::None);
-        movement->play();
-        switch(movementDirection)
+        setMoving(movementDirection != (unsigned char) MovementDirection::None);
+
+        if(movementDirection == (unsigned char) MovementDirection::None)
         {
-            case MovementDirection::Left:
-                setFlip(SDL_FLIP_HORIZONTAL);
-                break;
-            case MovementDirection::Right:
-                setFlip(SDL_FLIP_NONE);
-                break;
-            case MovementDirection::None:
-                movement->pause();
-                break;
-            default:
-                break;
+            movementLeft->pause();
+            movementRight->pause();
+            movementUp->pause();
+            movementDown->pause();
+        }
+        else if(movementDirection & (unsigned char) MovementDirection::Left)
+        {
+            movementLeft->play();
+            movementRight->pause();
+            movementUp->pause();
+            movementDown->pause();
+        }
+        else if(movementDirection & (unsigned char) MovementDirection::Right)
+        {
+            movementLeft->pause();
+            movementRight->play();
+            movementUp->pause();
+            movementDown->pause();
+        }
+        else if(movementDirection & (unsigned char) MovementDirection::Up)
+        {
+            movementLeft->pause();
+            movementRight->pause();
+            movementUp->play();
+            movementDown->pause();
+        }
+        else if(movementDirection & (unsigned char) MovementDirection::Down)
+        {
+            movementLeft->pause();
+            movementRight->pause();
+            movementUp->pause();
+            movementDown->play();
         }
     }
 
@@ -49,10 +83,15 @@ namespace bomberman
             const int posDiff = static_cast<int>(floor(speed * delta * getWidth()));
             prevPosDeltaX =
                 posDiff *
-                (isMovingHorizontally() ? (movementDirection == MovementDirection::Left ? -1 : 1) : 0);
+                (isMovingHorizontally() ? (movementDirection & (unsigned char) MovementDirection::Left ? -1 : 1) : 0);
             prevPosDeltaY =
-                posDiff * (isMovingVertically() ? (movementDirection == MovementDirection::Up ? -1 : 1) : 0);
+                posDiff * (isMovingVertically() ? (movementDirection & (unsigned char) MovementDirection::Up ? -1 : 1) : 0);
             // move sprite to next tick pos
+            if(abs(prevPosDeltaX) == posDiff && abs(prevPosDeltaY) == posDiff)
+            {
+                prevPosDeltaX *= 0.5;
+                prevPosDeltaY *= 0.5;
+            }
             setPosition(getPositionX() + prevPosDeltaX, getPositionY() + prevPosDeltaY);
         }
 
@@ -61,11 +100,11 @@ namespace bomberman
 
     bool Player::isMovingVertically() const
     {
-        return movementDirection == MovementDirection::Up || movementDirection == MovementDirection::Down;
+        return movementDirection & (unsigned char) MovementDirection::Up || movementDirection & (unsigned char) MovementDirection::Down;
     }
 
     bool Player::isMovingHorizontally() const
     {
-        return movementDirection == MovementDirection::Left || movementDirection == MovementDirection::Right;
+        return movementDirection & (unsigned char) MovementDirection::Left || movementDirection & (unsigned char) MovementDirection::Right;
     }
 } // namespace bomberman

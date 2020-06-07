@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "Entities/Text.h"
+#include "./Text.h"
 
 namespace bomberman
 {

@@ -1,4 +1,4 @@
-#include "Entities/Sprite.h"
+#include "./Sprite.h"
 
 namespace bomberman
 {

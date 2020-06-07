@@ -1,6 +1,6 @@
 #include <algorithm>
 
-#include "Scenes/Scene.h"
+#include "./Scene.h"
 
 namespace bomberman
 {
